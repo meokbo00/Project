@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BallController : MonoBehaviour
@@ -6,8 +7,9 @@ public class BallController : MonoBehaviour
     Rigidbody2D rigid;
     Vector2 lastVelocity;
     float deceleration = 2f;
-    public float expand = 4f;
+    public float increase = 4f;
     private bool iscolliding = false;
+    public bool isexpand = false;
     private void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
@@ -16,16 +18,28 @@ public class BallController : MonoBehaviour
 
     private void Update()
     {
+        Move();
+        expand();
+    }
+    void Move()
+    {
         lastVelocity = rigid.velocity;
         rigid.velocity -= rigid.velocity.normalized * deceleration * Time.deltaTime;
-
-        if (rigid.velocity.magnitude < 0.01f && !iscolliding)
-        {
-            transform.localScale += Vector3.one * expand * Time.deltaTime;
-            StartCoroutine(TurnCameraSmoothly());
-        }
     }
-    
+    void expand()
+    {
+        if (iscolliding) return;
+        if (rigid.velocity.magnitude > 0.01f) return;
+        transform.localScale += Vector3.one * increase * Time.deltaTime;
+        Invoke("StartTurnOver", 1.5f);
+        isexpand = true;
+    }
+    void StartTurnOver()
+    {
+        StartCoroutine(TurnOver());
+        isexpand = false;
+    }
+
     private void OnCollisionEnter2D(Collision2D coll)
     {
         Vector2 dir = Vector2.Reflect(lastVelocity.normalized, coll.contacts[0].normal);
@@ -36,9 +50,8 @@ public class BallController : MonoBehaviour
     {
         this.iscolliding = false;
     }
-    IEnumerator TurnCameraSmoothly()
+    IEnumerator TurnOver()
     {
-
         float elapsedTime = 0f;
         float duration = 1f; // 회전 소요 시간
 
