@@ -9,7 +9,7 @@ public class BallController : MonoBehaviour
     float deceleration = 2f;
     public float increase = 4f;
     private bool iscolliding = false;
-    public bool isexpand = false;
+    public bool hasExpanded = false;
     private void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
@@ -19,7 +19,23 @@ public class BallController : MonoBehaviour
     private void Update()
     {
         Move();
-        expand();
+        if(CheckCondition())
+        {
+            expand();
+        }
+    }
+    bool CheckCondition()
+    {
+        if (iscolliding || rigid.velocity.magnitude > 0.01f)
+        {
+            return false;
+        }
+        else if (iscolliding && rigid.velocity.magnitude > 0.01f)
+        {
+            return false;
+        }
+        else
+            return true;
     }
     void Move()
     {
@@ -28,16 +44,9 @@ public class BallController : MonoBehaviour
     }
     void expand()
     {
-        if (iscolliding) return;
-        if (rigid.velocity.magnitude > 0.01f) return;
+        
         transform.localScale += Vector3.one * increase * Time.deltaTime;
-        Invoke("StartTurnOver", 1.5f);
-        isexpand = true;
-    }
-    void StartTurnOver()
-    {
-        StartCoroutine(TurnOver());
-        isexpand = false;
+        hasExpanded = true;
     }
 
     private void OnCollisionEnter2D(Collision2D coll)
@@ -49,24 +58,5 @@ public class BallController : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         this.iscolliding = false;
-    }
-    IEnumerator TurnOver()
-    {
-        float elapsedTime = 0f;
-        float duration = 1f; // 회전 소요 시간
-
-        Quaternion startRotation = Camera.main.transform.rotation;
-        Quaternion endRotation = Quaternion.Euler(0f, 0f, 180f); // 목표 회전 각도
-
-        while (elapsedTime < duration)
-        {
-            float t = elapsedTime / duration;
-            Camera.main.transform.rotation = Quaternion.Slerp(startRotation, endRotation, t);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        // 회전 완료 후 최종 각도 설정
-        Camera.main.transform.rotation = endRotation;
     }
 }

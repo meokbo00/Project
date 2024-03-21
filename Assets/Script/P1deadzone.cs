@@ -7,7 +7,7 @@ public class P1deadzone : MonoBehaviour
     {
         BallController ball = collision.GetComponent<BallController>();
         if (collision.gameObject.tag == "P1ball")
-            if (!ball.isexpand)
+            if (!ball.hasExpanded)
                 SceneManager.LoadScene("P2 Win");
     }
 }
