@@ -3,8 +3,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public GameObject P1ballPrefab; 
-    public GameObject P2ballPrefab; 
-
+    public GameObject P2ballPrefab;
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
