@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class BallController : MonoBehaviour
@@ -6,54 +7,89 @@ public class BallController : MonoBehaviour
     Rigidbody2D rigid;
     Vector2 lastVelocity;
     float deceleration = 2f;
-    public float expand = 4f;
+    public float increase = 4f;
     private bool iscolliding = false;
+    public bool hasExpanded = false;
+    private bool isStopped = false;
+    private int randomNumber;
+    private TextMeshPro textMesh;
+
     private void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
-        rigid.velocity = transform.up * 300 * Time.deltaTime;
+        rigid.velocity = GameManager.shotDirection * GameManager.shotDistance; // GameManager에서 값 가져와서 구체 발사
+
+        GameObject textObject = new GameObject("TextMeshPro");
+        textObject.transform.parent = transform;
+        textMesh = textObject.AddComponent<TextMeshPro>();
+        randomNumber = Random.Range(1, 6);
+        textMesh.text = randomNumber.ToString();
+        textMesh.fontSize = 4;
+        textMesh.alignment = TextAlignmentOptions.Center;
+        textMesh.autoSizeTextContainer = true;
+        textMesh.rectTransform.localPosition = Vector3.zero;
+        textMesh.sortingOrder = 1;
     }
 
     private void Update()
     {
+        Move();
+        expand();
+    }
+
+    void Move()
+    {
+        if (rigid == null || isStopped) return;
+
         lastVelocity = rigid.velocity;
         rigid.velocity -= rigid.velocity.normalized * deceleration * Time.deltaTime;
 
-        if (rigid.velocity.magnitude < 0.01f && !iscolliding)
+        if (rigid.velocity.magnitude <= 0.01f && hasExpanded)
         {
-            transform.localScale += Vector3.one * expand * Time.deltaTime;
-            StartCoroutine(TurnCameraSmoothly());
+            isStopped = true;
+            StartCoroutine(DestroyRigidbodyDelayed());
         }
     }
-    
+    void expand()
+    {
+        if (rigid == null || iscolliding) return;
+        if (rigid.velocity.magnitude > 0.01f) return;
+        transform.localScale += Vector3.one * increase * Time.deltaTime;
+        hasExpanded = true;
+    }
+
     private void OnCollisionEnter2D(Collision2D coll)
     {
-        Vector2 dir = Vector2.Reflect(lastVelocity.normalized, coll.contacts[0].normal);
-        rigid.velocity = dir * Mathf.Max(lastVelocity.magnitude, 0f); // 감속하지 않고 반사만 진행
+        GetComponent<AudioSource>().Play();
+        if (coll.gameObject.tag == "P1ball" || coll.gameObject.tag == "P2ball")
+        {
+            if (randomNumber > 0)
+            {
+                randomNumber--;
+                textMesh.text = randomNumber.ToString();
+            }
+            if (randomNumber <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
+        if (coll.contacts != null && coll.contacts.Length > 0)
+        {
+            Vector2 dir = Vector2.Reflect(lastVelocity.normalized, coll.contacts[0].normal);
+            if (rigid != null)
+                rigid.velocity = dir * Mathf.Max(lastVelocity.magnitude, 0f); // 감속하지 않고 반사만 진행
+        }
         this.iscolliding = true;
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
         this.iscolliding = false;
     }
-    IEnumerator TurnCameraSmoothly()
+
+    IEnumerator DestroyRigidbodyDelayed()
     {
-
-        float elapsedTime = 0f;
-        float duration = 1f; // 회전 소요 시간
-
-        Quaternion startRotation = Camera.main.transform.rotation;
-        Quaternion endRotation = Quaternion.Euler(0f, 0f, 180f); // 목표 회전 각도
-
-        while (elapsedTime < duration)
-        {
-            float t = elapsedTime / duration;
-            Camera.main.transform.rotation = Quaternion.Slerp(startRotation, endRotation, t);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        // 회전 완료 후 최종 각도 설정
-        Camera.main.transform.rotation = endRotation;
+        yield return new WaitForSeconds(0.8f);
+        if (rigid != null)
+            Destroy(rigid);
     }
 }

@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - P1deadzone
+  - P2deadzone
+  - P1ball
+  - P2ball
   layers:
   - Default
   - TransparentFX
