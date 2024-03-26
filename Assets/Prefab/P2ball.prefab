@@ -14,8 +14,13 @@ GameObject:
   - component: {fileID: 569950362156945474}
   - component: {fileID: 8450513375203151931}
   m_Layer: 0
+<<<<<<<< HEAD:Assets/Prefab/P2ball.prefab
   m_Name: P2ball
   m_TagString: P2ball
+========
+  m_Name: P1ball
+  m_TagString: P1ball
+>>>>>>>> a606e8e4950a2e6d9860962abaec6bd22e9c7868:Assets/Prefab/P1ball.prefab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

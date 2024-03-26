@@ -60,7 +60,10 @@ public class BallController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D coll)
     {
+<<<<<<< HEAD
         GetComponent<AudioSource>().Play();
+=======
+>>>>>>> a606e8e4950a2e6d9860962abaec6bd22e9c7868
         if (coll.gameObject.tag == "P1ball" || coll.gameObject.tag == "P2ball")
         {
             if (randomNumber > 0)

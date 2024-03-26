@@ -1351,7 +1351,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1132099133}
   - component: {fileID: 1132099132}
+<<<<<<< HEAD
   - component: {fileID: 1132099134}
+=======
+>>>>>>> a606e8e4950a2e6d9860962abaec6bd22e9c7868
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1388,6 +1391,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 --- !u!82 &1132099134
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1484,6 +1488,8 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+=======
+>>>>>>> a606e8e4950a2e6d9860962abaec6bd22e9c7868
 --- !u!1 &1276589405
 GameObject:
   m_ObjectHideFlags: 0
